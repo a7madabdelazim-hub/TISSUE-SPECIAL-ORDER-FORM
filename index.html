@@ -499,8 +499,7 @@ textarea { resize: vertical; min-height: 60px; }
               <div class="field">
                 <label class="field-label">Packing Type</label>
                 <div class="radio-row" data-radio-group="packingType">
-                  <label class="radio-pill"><input type="radio" name="packingType" value="kg" /> KG</label>
-                  <label class="radio-pill"><input type="radio" name="packingType" value="pieces" /> PIECES</label>
+                      <label class="radio-pill"><input type="radio" name="packingType" value="pieces" /> PIECES</label>
                   <label class="radio-pill"><input type="radio" name="packingType" value="" /> (unset)</label>
                 </div>
               </div>
@@ -1031,8 +1030,7 @@ textarea { resize: vertical; min-height: 60px; }
     <div>PAPER COLOR: {{paperColor}}</div>
     <div>
       PACKING:
-      <span class="opt"><span class="opt-box {{packingTypeKgSel}}"></span><span class="{{packingTypeKgRed}}">{{packingKgLabel}}</span></span>
-      <span class="opt"><span class="opt-box {{packingTypePiecesSel}}"></span><span class="{{packingTypePiecesRed}}">{{packingPiecesLabel}}</span></span>
+<span class="opt"><span class="opt-box {{packingTypePiecesSel}}"></span><span class="{{packingTypePiecesRed}}">{{packingPiecesLabel}}</span></span>
     </div>
     <div><span class="opt"><span class="opt-box {{tubeEmbossed.full}}"></span><span class="{{tubeEmbossed.full.red}}">FULL EMBOSSED</span></span> &nbsp; <span class="opt"><span class="opt-box {{tubeEmbossed.border}}"></span><span class="{{tubeEmbossed.border.red}}">BORDER</span></span></div>
   </div>
@@ -1308,23 +1306,16 @@ textarea { resize: vertical; min-height: 60px; }
       '{{item2.amount}}': red(form.items[1].amount),
       '{{artworkChangesYes}}': form.artworkChanges === 'yes' ? '<span class="red">YES</span>' : '',
       '{{artworkChangesNo}}': form.artworkChanges === 'no' ? '<span class="red">NO</span>' : '',
-      '{{lengthCm}}': redOr(form.lengthCm ? form.lengthCm + ' CM' : ''),
+      '{{lengthCm}}': redOr(form.lengthCm || ''),
       '{{widthCm}}': redOr(form.widthCm ? form.widthCm + ' CM' : ''),
       '{{sideGussetCm}}': redOr(form.sideGussetCm ? form.sideGussetCm + ' CM' : ''),
-      '{{overlapCm}}': redOr(form.overlapCm ? form.overlapCm + ' CM' : ''),
+      '{{overlapCm}}': redOr(form.overlapCm || ''),
       '{{paperColor}}': redOr(form.paperColor),
-      '{{packingTypeKgSel}}': form.packingType === 'kg' ? '' : 'empty',
-      '{{packingTypeKgRed}}': form.packingType === 'kg' ? 'red' : '',
       '{{packingTypePiecesSel}}': form.packingType === 'pieces' ? '' : 'empty',
       '{{packingTypePiecesRed}}': form.packingType === 'pieces' ? 'red' : '',
       '{{packingValue}}': escapeHtml(form.packingValue),
-      '{{packingKgLabel}}': (function() {
-        if (form.packingType === 'kg' && form.packingValue) return 'KG (' + escapeHtml(form.packingValue) + ')';
-        return 'KG (.....)';
-      })(),
       '{{packingPiecesLabel}}': (function() {
-        if (form.packingType === 'pieces' && form.packingValue) return escapeHtml(form.packingValue) + ' PIECES';
-        if (form.packingType === 'pieces') return 'PIECES';
+        if (form.packingValue) return escapeHtml(form.packingValue) + ' PIECES';
         return 'PIECES';
       })(),
       '{{tubeEmbossed.full}}': form.tubeEmbossed === 'full' ? '' : 'empty',
