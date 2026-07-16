@@ -1101,7 +1101,8 @@ textarea { resize: vertical; min-height: 60px; }
 
 </div>
 </div>
-<script type="text/plain" id="h2c-source">
+<!-- html2canvas 1.4.1 inlined for self-contained file (loads after page render) -->
+<script>
 /* html2canvas 1.4.1 - inlined for self-contained file */
 /*!
  * html2canvas 1.4.1 <https://html2canvas.hertzen.com>
@@ -1643,42 +1644,16 @@ textarea { resize: vertical; min-height: 60px; }
     renderPayments();
   }
 
-  // ===== Lazy-load html2canvas (inlined as text, executed on demand) =====
-  // Source stored in <script type="text/plain" id="h2c-source"> so the browser
-  // doesn't parse it on page load. When user clicks Image, we copy the text
-  // into a real <script> tag — single self-contained file, works on iOS Safari
-  // and offline.
-  let _h2cPromise = null;
+  // ===== html2canvas availability check =====
+  // html2canvas is inlined as a regular <script> at the end of <body>, so it's
+  // always available once the page has loaded. This wrapper keeps the call
+  // site simple and gives a clear error if the user clicks Image before the
+  // page finishes loading.
   function ensureHtml2Canvas() {
     if (typeof window.html2canvas === 'function') {
       return Promise.resolve();
     }
-    if (_h2cPromise) return _h2cPromise;
-    _h2cPromise = new Promise(function(resolve, reject) {
-      try {
-        const src = document.getElementById('h2c-source');
-        if (!src || !src.textContent) {
-          reject(new Error('html2canvas source block not found in page'));
-          return;
-        }
-        const s = document.createElement('script');
-        s.textContent = src.textContent;
-        document.head.appendChild(s);
-        // Give the engine a tick to execute
-        setTimeout(function() {
-          if (typeof window.html2canvas === 'function') {
-            resolve();
-          } else {
-            _h2cPromise = null;
-            reject(new Error('html2canvas failed to initialize after injection'));
-          }
-        }, 0);
-      } catch (e) {
-        _h2cPromise = null;
-        reject(e);
-      }
-    });
-    return _h2cPromise;
+    return Promise.reject(new Error('html2canvas not loaded yet — wait a moment for the page to finish loading, then try again'));
   }
 
   // ===== Export PNG (high-quality image via html2canvas) =====
