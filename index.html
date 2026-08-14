@@ -20,7 +20,6 @@
   --border: #e4e6eb;
   --muted: #6b7280;
   --primary: #c00000;
-  --primary-hover: #a00000;
   --accent: #fef2f2;
   --text: #111827;
   --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
@@ -58,22 +57,6 @@ a { color: var(--primary); }
   box-shadow: 0 4px 16px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.9);
   overflow: hidden;
 }
-.header-row1 {
-  display: flex; align-items: center; gap: 12px;
-  padding: 10px 14px;
-  border-bottom: 1px solid rgba(0,0,0,0.06);
-}
-.header-title { flex: 1; min-width: 0; }
-.header-title h1 {
-  font-size: 17px; font-weight: 700; color: #1d1d1f;
-  line-height: 1.15; letter-spacing: -0.3px;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  margin: 0;
-}
-.header-title .subtitle {
-  font-size: 11px; color: #6e6e73; margin-top: 2px;
-  font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
 .header-row2 {
   display: grid; grid-template-columns: 1fr 1fr;
   gap: 8px; padding: 10px 14px 14px 14px;
@@ -102,7 +85,6 @@ a { color: var(--primary); }
 @media (min-width: 768px) {
   .header { padding: 10px 20px; }
   .glass-card { display: flex; align-items: center; }
-  .header-row1 { border-bottom: none; flex: 1; padding: 8px 14px; }
   .header-row2 { grid-template-columns: repeat(4, auto); padding: 8px 14px; gap: 8px; }
   .header-row2 .btn { padding: 8px 16px; }
 }
@@ -130,29 +112,52 @@ a { color: var(--primary); }
 
 /* ===== Tabs (Apple liquid glass pills) ===== */
 .tabs {
-  display: flex; gap: 2px; margin-bottom: 16px;
+  display: flex; gap: 3px;
   padding: 4px;
-  background: rgba(255, 255, 255, 0.6);
+  margin-bottom: 16px;
+  background: rgba(255, 255, 255, 0.55);
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.8);
-  border-radius: 16px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.9);
+  /* Bold gold rim -- deliberately different from the app's red accent so
+     the tab bar reads as its own distinct "liquid glass" surface. */
+  border: 2px solid rgba(201, 162, 39, 0.6);
+  border-radius: 18px;
+  box-shadow: 0 4px 14px rgba(201,162,39,0.18), 0 2px 8px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.9);
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 }
 .tab {
-  background: transparent; border: 0; padding: 8px 14px;
-  font-size: 13px; color: #6e6e73; border-radius: 12px;
-  white-space: nowrap; flex-shrink: 0;
-  transition: all 0.2s ease; font-family: inherit; cursor: pointer;
+  position: relative;
+  flex: 1 1 0%;
+  min-width: 0;
+  text-align: center;
+  background: linear-gradient(180deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.22) 100%);
+  border: 1px solid rgba(255,255,255,0.55);
+  padding: 9px 2px;
+  font-size: 12px; letter-spacing: -0.1px; color: #6e6e73; border-radius: 14px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  transition: all 0.25s ease; font-family: inherit; cursor: pointer;
   font-weight: 500;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.6), 0 1px 2px rgba(0,0,0,0.04);
 }
-.tab:hover { color: #1d1d1f; }
+/* Diagonal glass sheen overlay -- gives each pill a glossy, liquid look
+   that's distinct from the flat .btn / .radio-pill / .checkbox-pill
+   surfaces elsewhere. */
+.tab::before {
+  content: "";
+  position: absolute; inset: 0;
+  background: linear-gradient(120deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0) 38%, rgba(255,255,255,0.3) 68%, rgba(255,255,255,0) 100%);
+  pointer-events: none;
+}
+.tab:hover {
+  color: #1d1d1f;
+  background: linear-gradient(180deg, rgba(255,255,255,0.75) 0%, rgba(255,255,255,0.35) 100%);
+}
 .tab.active {
-  color: #c00000; font-weight: 600;
-  background: rgba(255, 255, 255, 0.95);
-  box-shadow: 0 1px 4px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,1);
+  color: #c00000; font-weight: 700;
+  background: linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(255,246,222,0.92) 100%);
+  border-color: rgba(201, 162, 39, 0.65);
+  box-shadow: 0 3px 10px rgba(201,162,39,0.25), 0 1px 4px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,1);
 }
 .tab-panel { display: none; }
 .tab-panel.active { display: block; animation: fadeIn 0.15s ease; }
@@ -196,7 +201,6 @@ textarea { resize: vertical; min-height: 60px; }
   font-size: 11px; font-weight: 600; text-transform: uppercase;
   letter-spacing: 0.06em; color: var(--muted); margin: 0 0 12px 0;
 }
-.card-subtitle { font-size: 13px; font-weight: 600; margin: 0 0 10px 0; }
 
 /* ===== Radio groups ===== */
 .radio-row { display: flex; gap: 16px; flex-wrap: wrap; align-items: center; }
@@ -218,14 +222,7 @@ textarea { resize: vertical; min-height: 60px; }
   font-size: 13px; font-weight: 500; transition: all 0.15s;
 }
 .btn:hover { background: var(--bg); border-color: #c4c7cc; }
-.btn-primary { background: var(--primary); color: #fff; border-color: var(--primary); }
-.btn-primary:hover { background: var(--primary-hover); border-color: var(--primary-hover); }
-.btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
-.btn-ghost { background: transparent; border-color: transparent; }
-.btn-ghost:hover { background: var(--bg); }
 .btn-sm { padding: 4px 8px; font-size: 12px; }
-.btn-danger { color: var(--primary); }
-.btn-danger:hover { background: var(--accent); border-color: var(--primary); }
 
 /* ===== Preview panel (desktop) ===== */
 .preview-panel {
@@ -259,19 +256,6 @@ textarea { resize: vertical; min-height: 60px; }
 .toast.error { background: var(--primary); }
 @keyframes toastIn { from { opacity: 0; transform: translate(-50%, 10px); } to { opacity: 1; transform: translate(-50%, 0); } }
 
-/* ===== Modal ===== */
-.modal-backdrop {
-  position: fixed; inset: 0; background: rgba(0,0,0,0.4);
-  display: flex; align-items: center; justify-content: center; z-index: 50;
-}
-.modal {
-  background: var(--panel); border-radius: 8px; padding: 20px;
-  max-width: 400px; width: 90%; box-shadow: 0 8px 24px rgba(0,0,0,0.2);
-}
-.modal h3 { margin: 0 0 8px 0; font-size: 16px; }
-.modal p { margin: 0 0 16px 0; color: var(--muted); font-size: 13px; }
-.modal-actions { display: flex; justify-content: flex-end; gap: 8px; }
-
 .item-row { border: 1px solid var(--border); border-radius: 6px; padding: 12px; margin-bottom: 10px; }
 .item-row h4 { margin: 0 0 8px 0; font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
 </style>
@@ -282,9 +266,6 @@ textarea { resize: vertical; min-height: 60px; }
   <!-- ===== Header (Apple liquid glass) ===== -->
   <header class="header">
     <div class="glass-card">
-      <div class="header-row1">
-        <div class="header-title"></div>
-      </div>
       <div class="header-row2">
         <button type="button" class="btn btn-glass" id="btnNew">+ New</button>
         <button type="button" class="btn btn-liquid-red" id="btnExport"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="0.5" y="0.5" width="13" height="13" rx="2" fill="white" stroke="white"/><circle cx="4" cy="4" r="1.2" fill="#FFD60A"/><path d="M1 11L4.5 7.5L7 10L9.5 6L13 11V12.5C13 12.78 12.78 13 12.5 13H1.5C1.22 13 1 12.78 1 12.5V11Z" fill="#34C759"/><path d="M1 11L4.5 7.5L7 10L9.5 6L13 11" stroke="#34C759" stroke-width="0.5"/></svg>Image</button>
@@ -708,21 +689,6 @@ textarea { resize: vertical; min-height: 60px; }
     box-decoration-break: clone;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
-  }
-
-  .check {
-    display: inline-block;
-    width: 36pt; height: 36pt;
-    position: relative;
-  }
-  .check::before {
-    content: "";
-    position: absolute;
-    left: 8pt; top: 14pt;
-    width: 10pt; height: 18pt;
-    border: solid #c00000;
-    border-width: 0 6pt 6pt 0;
-    transform: rotate(45deg);
   }
 
   /* Product table */
@@ -1212,7 +1178,7 @@ textarea { resize: vertical; min-height: 60px; }
       productTypes: [], tubeEmbossed: '',
       paperColor: '',
       lengthCm: '', widthCm: '', sideGussetCm: '', overlapCm: '',
-      thickness: '', packingType: '', packingValue: '', 
+      packingType: '', packingValue: '', 
       colors: [ {code:''}, {code:''}, {code:''}, {code:''}, {code:''} ],
       colorRemarks: '',
       anyChangeInDesign: '', artworkAttached: '', sampleAttached: '', colourShadeApproval: '',
@@ -1443,11 +1409,11 @@ textarea { resize: vertical; min-height: 60px; }
             '<input type="text" data-item="' + idx + '.product" placeholder="" value="' + escapeHtml(item.product) + '"></div>' +
         '</div>' +
         '<div class="field-row-4">' +
-          '<div class="field"><label class="field-label">Quantity</label>' +
+          '<div class="field"><label class="field-label">Quantity' + (idx === 0 ? '<span class="req-star">*</span>' : '') + '</label>' +
             '<input type="text" inputmode="numeric" pattern="[0-9]*" data-item="' + idx + '.quantity" placeholder="" value="' + escapeHtml(item.quantity) + '"></div>' +
-          '<div class="field"><label class="field-label">Unit</label>' +
+          '<div class="field"><label class="field-label">Unit' + (idx === 0 ? '<span class="req-star">*</span>' : '') + '</label>' +
             '<input type="text" data-item="' + idx + '.unit" placeholder="" value="' + escapeHtml(item.unit) + '"></div>' +
-          '<div class="field"><label class="field-label">Unit Price</label>' +
+          '<div class="field"><label class="field-label">Unit Price' + (idx === 0 ? '<span class="req-star">*</span>' : '') + '</label>' +
             '<input type="text" inputmode="decimal" pattern="[0-9.]*" data-item="' + idx + '.unitPrice" placeholder="" value="' + escapeHtml(item.unitPrice) + '"></div>' +
           '<div class="field"><label class="field-label">Amount</label>' +
             '<input type="text" data-item="' + idx + '.amount" placeholder="" value="' + escapeHtml(item.amount) + '"></div>' +
@@ -1681,6 +1647,7 @@ textarea { resize: vertical; min-height: 60px; }
   function newForm() {
     state.form = emptyForm();
     syncAllInputs();
+    clearValidationMarks();   // don't carry red "missing field" outlines into the fresh form
     autoFillOrderDate();
     updateEditingName();
     schedulePreview();
@@ -1747,6 +1714,9 @@ textarea { resize: vertical; min-height: 60px; }
       { label: 'Expected Delivery Date', tab: 'customer', valid: !!(state.form.expectedDeliveryDate || '').trim(), focus: 'input[data-field="expectedDeliveryDate"]' },
       { label: 'Destination', tab: 'customer', valid: !!(state.form.destination || '').trim(), focus: 'input[data-field="destination"]' },
       { label: 'Product / Item', tab: 'product', valid: !!(state.form.items[0] && state.form.items[0].product && state.form.items[0].product.trim()), focus: 'input[data-item="0.product"]' },
+      { label: 'Quantity (Row 1)', tab: 'product', valid: !!(state.form.items[0] && state.form.items[0].quantity && state.form.items[0].quantity.trim()), focus: 'input[data-item="0.quantity"]' },
+      { label: 'Unit (Row 1)', tab: 'product', valid: !!(state.form.items[0] && state.form.items[0].unit && state.form.items[0].unit.trim()), focus: 'input[data-item="0.unit"]' },
+      { label: 'Unit Price (Row 1)', tab: 'product', valid: !!(state.form.items[0] && state.form.items[0].unitPrice && state.form.items[0].unitPrice.trim()), focus: 'input[data-item="0.unitPrice"]' },
       { label: 'Artwork Changes', tab: 'product', valid: !!state.form.artworkChanges, focus: null, group: '#artworkChangesGroup' },
       { label: 'Product Type (select one or more)', tab: 'specs', valid: Array.isArray(state.form.productTypes) && state.form.productTypes.length > 0, focus: null, group: '[data-checkbox-group="productTypes"]' },
       { label: 'No. of Plies', tab: 'specs', valid: !!(state.form.lengthCm || '').toString().trim(), focus: 'input[data-field="lengthCm"]' },
