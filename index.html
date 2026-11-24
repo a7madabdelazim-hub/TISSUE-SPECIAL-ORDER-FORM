@@ -524,7 +524,7 @@ div.invalid-highlight { outline: 2px solid #dc2626; outline-offset: 4px; border-
   }
   .page {
     width: 595pt;
-    padding: 14pt 14pt 0 14pt;
+    padding: 14pt 14pt 14pt 14pt;   /* bottom margin so the last border is never clipped */
     position: relative;
     font-size: 11.1pt;
     margin: 0 auto;
@@ -860,6 +860,25 @@ div.invalid-highlight { outline: 2px solid #dc2626; outline-offset: 4px; border-
   }
   .page { position: relative; z-index: 1; }
 
+  /* Footer: mirrors the title's double rule so the page opens and closes the same way. */
+  .form-footer {
+    margin-top: 9pt;
+    text-align: center;
+    font-size: 10pt;
+    font-weight: 700;
+    color: #000;
+    letter-spacing: 0.3pt;
+  }
+  .form-footer::before {
+    content: "";
+    display: block;
+    box-sizing: content-box;   /* fixed so the 3pt gap renders the same in both apps */
+    border-top: 1.5pt solid #000;
+    border-bottom: 1.5pt solid #000;
+    height: 3pt;
+    margin: 0 50pt 5pt 50pt;
+  }
+
 </style>
 </head>
 <body>
@@ -1094,6 +1113,8 @@ div.invalid-highlight { outline: 2px solid #dc2626; outline-offset: 4px; border-
     </div>
   </div>
 
+  <div class="form-footer">Thank you for choosing Century Gate Company.LTD</div>
+
 </div>
 </div>
 </body>
@@ -1226,7 +1247,7 @@ div.invalid-highlight { outline: 2px solid #dc2626; outline-offset: 4px; border-
 
   function renderPdfHtml(form) {
     // Order-type tick: dark red with a black outline (two stacked strokes per arm; html2canvas-safe).
-    var CHECKMARK_IMG = '<span style="display:inline-block;position:relative;width:33pt;height:26pt;"><span style="position:absolute;left:-1.05pt;top:13.25pt;width:18.61pt;height:8.00pt;background:#000;border-radius:4.00pt;transform:rotate(45.00deg);-webkit-transform:rotate(45.00deg);"></span><span style="position:absolute;left:4.06pt;top:8.25pt;width:31.38pt;height:8.00pt;background:#000;border-radius:4.00pt;transform:rotate(131.53deg);-webkit-transform:rotate(131.53deg);"></span><span style="position:absolute;left:0.45pt;top:14.75pt;width:15.61pt;height:5.00pt;background:#8b0000;border-radius:2.50pt;transform:rotate(45.00deg);-webkit-transform:rotate(45.00deg);"></span><span style="position:absolute;left:5.56pt;top:9.75pt;width:28.38pt;height:5.00pt;background:#8b0000;border-radius:2.50pt;transform:rotate(131.53deg);-webkit-transform:rotate(131.53deg);"></span></span>';
+    var CHECKMARK_IMG = '<span style="display:inline-block;position:relative;width:33pt;height:26pt;"><span style="position:absolute;left:0.65pt;top:14.95pt;width:15.21pt;height:4.60pt;background:#000;border-radius:2.30pt;transform:rotate(45.00deg);-webkit-transform:rotate(45.00deg);"></span><span style="position:absolute;left:5.76pt;top:9.95pt;width:27.98pt;height:4.60pt;background:#000;border-radius:2.30pt;transform:rotate(131.53deg);-webkit-transform:rotate(131.53deg);"></span><span style="position:absolute;left:1.65pt;top:15.95pt;width:13.21pt;height:2.60pt;background:#8b0000;border-radius:1.30pt;transform:rotate(45.00deg);-webkit-transform:rotate(45.00deg);"></span><span style="position:absolute;left:6.76pt;top:10.95pt;width:25.98pt;height:2.60pt;background:#8b0000;border-radius:1.30pt;transform:rotate(131.53deg);-webkit-transform:rotate(131.53deg);"></span></span>';
     let html = getPdfTemplate();
     // Single-pass replacement of {{...}} tokens
     const tokens = {
@@ -1889,6 +1910,17 @@ div.invalid-highlight { outline: 2px solid #dc2626; outline-offset: 4px; border-
     return false;
   }
 
+
+  // Export scale: 4x everywhere, except on iPhone/iPad where the canvas is kept
+  // under 16,777,216 pixels (the limit on iOS before 18) so the bottom of the
+  // page is never dropped. Desktop output is unchanged.
+  function safeExportScale(w, h) {
+    var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    if (!isIOS) return 4;
+    var maxScale = Math.sqrt(16777216 / (w * h));
+    return Math.min(4, Math.floor(maxScale * 100) / 100);
+  }
+
   // ===== Export PNG (high-quality image via html2canvas) =====
   function exportPng() {
     if (!validateRequiredFields()) return;
@@ -1945,16 +1977,19 @@ div.invalid-highlight { outline: 2px solid #dc2626; outline-offset: 4px; border-
       };
 
       waitForReady(function() {
+        // Height rounded UP (+2px safety) so a fractional height never clips the last row.
+        const exportW = target.scrollWidth;
+        const exportH = Math.ceil(target.getBoundingClientRect().height) + 2;
         window.html2canvas(target, {
-          scale: 4,  // 4x for highest quality
+          scale: safeExportScale(exportW, exportH),  // 4x (capped on iPhone only)
           backgroundColor: '#ffffff',
           useCORS: true,
           allowTaint: false,
           logging: false,
-          width: target.scrollWidth,
-          height: target.scrollHeight,
-          windowWidth: target.scrollWidth,
-          windowHeight: target.scrollHeight
+          width: exportW,
+          height: exportH,
+          windowWidth: exportW,
+          windowHeight: exportH
         }).then(function(canvas) {
           canvas.toBlob(function(blob) {
             container.remove();
